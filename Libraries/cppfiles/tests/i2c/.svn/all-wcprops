@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/hardware_development/!svn/ver/178/trunk/libraries/platforms/BBB/cppfiles/tests/i2c
+END
+Test
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/hardware_development/!svn/ver/178/trunk/libraries/platforms/BBB/cppfiles/tests/i2c/Test
+END
+LM73Test.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/hardware_development/!svn/ver/178/trunk/libraries/platforms/BBB/cppfiles/tests/i2c/LM73Test.cpp
+END
+I2C.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/hardware_development/!svn/ver/178/trunk/libraries/platforms/BBB/cppfiles/tests/i2c/I2C.h
+END
+LM73.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/hardware_development/!svn/ver/178/trunk/libraries/platforms/BBB/cppfiles/tests/i2c/LM73.cpp
+END
+LM73.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/hardware_development/!svn/ver/178/trunk/libraries/platforms/BBB/cppfiles/tests/i2c/LM73.h
+END
+RTCtest.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/hardware_development/!svn/ver/53/trunk/libraries/platforms/BBB/cppfiles/tests/i2c/RTCtest.cpp
+END
+ChipCap2Test.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/hardware_development/!svn/ver/2/trunk/libraries/platforms/BBB/cppfiles/tests/i2c/ChipCap2Test.cpp
+END
+I2CTest.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/hardware_development/!svn/ver/2/trunk/libraries/platforms/BBB/cppfiles/tests/i2c/I2CTest.cpp
+END
+I2C.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/hardware_development/!svn/ver/178/trunk/libraries/platforms/BBB/cppfiles/tests/i2c/I2C.cpp
+END
