@@ -1,0 +1,40 @@
+10
+
+dir
+245
+https://svn/hardware_development/trunk/libraries/platforms/BBB/cfiles/tests
+https://svn/hardware_development
+
+
+
+2014-06-19T20:38:32.070162Z
+2
+yacovellij
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+f76e4994-33cb-4107-aee0-45b65c62d12f
+
+adc
+dir
+
+uart
+dir
+
+i2c
+dir
+
+gpio
+dir
+

@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/hardware_development/!svn/ver/2/trunk/libraries/platforms/BBB/cfiles/includes/i2c
+END
+chipCap2.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/hardware_development/!svn/ver/2/trunk/libraries/platforms/BBB/cfiles/includes/i2c/chipCap2.h
+END
+i2c.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/hardware_development/!svn/ver/2/trunk/libraries/platforms/BBB/cfiles/includes/i2c/i2c.h
+END
+lm73.c
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/hardware_development/!svn/ver/2/trunk/libraries/platforms/BBB/cfiles/includes/i2c/lm73.c
+END
+lm73.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/hardware_development/!svn/ver/2/trunk/libraries/platforms/BBB/cfiles/includes/i2c/lm73.h
+END
+chipCap2.c
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/hardware_development/!svn/ver/2/trunk/libraries/platforms/BBB/cfiles/includes/i2c/chipCap2.c
+END
+i2c.c
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/hardware_development/!svn/ver/2/trunk/libraries/platforms/BBB/cfiles/includes/i2c/i2c.c
+END

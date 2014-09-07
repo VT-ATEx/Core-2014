@@ -1,0 +1,43 @@
+10
+
+dir
+245
+https://svn/hardware_development/trunk/libraries/platforms/BBB/cppfiles/includes
+https://svn/hardware_development
+
+
+
+2014-08-07T18:03:40.353797Z
+244
+gerhardw
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+f76e4994-33cb-4107-aee0-45b65c62d12f
+
+adc
+dir
+
+spi
+dir
+
+uart
+dir
+
+i2c
+dir
+
+gpio
+dir
+
