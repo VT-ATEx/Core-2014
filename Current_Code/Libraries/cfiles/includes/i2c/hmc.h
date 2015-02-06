@@ -1,5 +1,5 @@
-#ifndef MAG3_H_
-#define MAG3_H_
+#ifndef HMC_H_
+#define HMC_H_
 //The above defines the header
 
 #include "i2c.h"
@@ -15,8 +15,8 @@ typedef struct Magnetics{
 	int z;
 } Magnetics;
 
-int* mag3Init(int addr, int bus);
-Magnetics mag3GetData(int* i2cfd);
-void mag3Close(int* i2cfd);
+int* hmcInit(int addr, int bus);
+Magnetics hmcGetData(int* i2cfd);
+void hmcClose(int* i2cfd);
 
 #endif

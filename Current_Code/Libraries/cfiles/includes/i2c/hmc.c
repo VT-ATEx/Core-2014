@@ -1,11 +1,11 @@
-#include "mag3.h"
+#include "hmc.h"
 
 //Peter Morrissey
 //2015.02.05
 //Contact pfm1995[at]vt[dot]edu with questions
 
 //Stars up I2C
-int* mag3Init(int addr, int bus) {
+int* hmcInit(int addr, int bus) {
 	int*  i2cfd;
 	i2cfd = I2COpenBus(bus);
 	//If I2C fails to open, return error
@@ -17,7 +17,7 @@ int* mag3Init(int addr, int bus) {
 }
 
 //This is where I pull the data.
-Magnetics mag3GetData(int* i2cfd) {
+Magnetics hmcGetData(int* i2cfd) {
 	//Create an array of six bytes to hold the data
 	char data[6];
 	//Create my struct
@@ -43,6 +43,6 @@ Magnetics mag3GetData(int* i2cfd) {
 }
 
 //Closes the I2C connection
-void mag3Close(int* i2cfd) {
+void hmcClose(int* i2cfd) {
 	I2CCloseBus(i2cfd);
 }
