@@ -1,20 +1,35 @@
 #include "hmc.h"
 
-#define BUS 2
-
-HMC::HMC(const int addr) : i2c(BUS) {
-	i2c.startbus(addr);
-}
-
 HMC::HMC(const int bus, const int addr) : i2c(bus) {
 	i2c.startbus(addr);
+	//Sets sensor to single measurement, 8-average, 15 Hz
+	char buffer[2];
+	buffer[0] = 0x00;
+	buffer[1] = 0x70;
+	if (i2c.writebus(buffer) != 2) {
+		cout << "Failed to write settings to HMC." << endl;
+	}
+
+	buffer[0] = 0x01;
+	buffer[1] = 0xA0;
+	if(i2c.writebus(buffer) != 2) {
+		cout << "Failed to write gain settings to HMC." <<endl;
+	}
+
+	buffer[0] = 0x02;
+	buffer[1] = 0x00;
+	if(i2c.writebus(buffer) != 2) {
+		cout << "Failed to write measurement mode to HMC."
+			<< endl;
+	}
 }
 
 Magnetics HMC::getData() {
 	char* data = new char[6];
 	Magnetics foo = {0,0,0};
-	data[0] = 0xff;
-	
+	data[0] = 0xff;	
+
+	i2c.writebus(0x06);
 	if(i2c.readbus(data, 6) != 6) {
 		perror("Read did not return bytes specified");
 		delete[] data;
@@ -30,6 +45,7 @@ Magnetics HMC::getData() {
 		foo.y |= data[3];
 		foo.z |= data[5];
 	}
+	i2c.writebus(0x03);
 	delete[] data;
 	return foo;
 }

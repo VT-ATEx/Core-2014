@@ -1,8 +1,8 @@
-//Philip N 12/10/2014
+//Philip N 2/13/2015
 
-#define Adress 0x77
-#define Bus 1
-#define Delay 12500
+#define Adress 0x77 // The I2C address that the BMP is on
+#define Bus 1 // The I2C bus the BMP is on
+#define Delay 12500 // Min delay between reading temperature and pressure values. should be > than 4500 (4.5 ms)
 
 #include <iostream>
 #include <math.h>
@@ -14,9 +14,20 @@ using std::cin;
 using std::cout;
 using std::endl;
 
+
+
+// Prototypes
 void FancyPrint(char* data, short start, short end);
 void read(char* data, short location, short BytesToRead);
 void RegWrite(char NewValue, short LocationToWriteTo);
+class BMP_Presure_Temp;
+
+// Abuse of static variables
+char data[0x100];
+BMP_Presure_Temp* TheBMP180;
+
+// void setup() and int* Get_Temperature_Pressure() are moved after the class declaration so that it may use it's functions
+
 
 class BMP_Presure_Temp {
 public:
@@ -118,22 +129,21 @@ void BMP_Presure_Temp::GetPressure() {
 // a = 44330*(1 - (p/p0)^(1/5.255)) . //p = output pressure. //p0 = 101325 (sea level)
 }
 
-int main() {
-	short datasize = 0x100;
-	char* data = new char[datasize];
-
-	read(data + 0x80, 0x80, 0x7f);
-	BMP_Presure_Temp dog(data);
-	while(1)
-	{
-	dog.GetTemp();
-	dog.GetPressure();
-	usleep(500000);
-	cout << "Temperature is " << (float) dog.T / 10 << " degrees Celsius" << endl;
-	cout << "Pressure is " << dog.p << " Pa" << endl;
-
+void SetupBMP180()
+{
+TheBMP180 = new BMP_Presure_Temp(data);
 }
-	return 0;
+
+// Returns a 2*int array pointer. return[0] is temperature and return[1] is pressure. a temperature of 250 is 25 c , temp of 10 is 1 c ... Presure is in Pa.
+int* GetBMP180_Temperature_Pressure()
+{
+static int* Temp_Pressure = new int[2];
+
+TheBMP180->GetTemp();
+TheBMP180->GetPressure();
+
+TheBMP180->T = Temp_Pressure[0];
+TheBMP180->p = Temp_Pressure[1];
 }
 
 void read(char* data, short location, short BytesToRead) {
@@ -170,32 +180,12 @@ void RegWrite(char NewValue, short LocationToWriteTo) {
 	static I2C cat(Bus);
 	cat.startbus(Adress);
 	static char* temp = new char[2];
-// It seems that temp[0] and temp[1] do not matter
-//	temp[0] = 0x00;
-//	temp[1] = 0x00;
 	temp[0] = LocationToWriteTo;
 	temp[1] = NewValue;
 	usleep(Delay);
 	cat.writebus(temp);
 }
 
-/*
- cout << "UT: " << UT << endl;
- cout <<"AC1 : "<<AC1 << endl; 
- cout <<"AC2 : "<<AC2<< endl; //AC2 <<" = "; 
- cout <<"AC3 : "<<AC3 << endl; 
- cout <<"AC4 : "<<AC4 << endl; 
- cout <<"AC5 : "<<AC5 << endl; 
- cout <<"AC6 : "<<AC6 << endl; 
- cout <<"B1 : "<<B1 << endl; 
- cout <<"B2 : "<<B2 << endl; 
- cout <<"MB : "<<MB << endl; 
- cout <<"MC : "<<MC << endl; 
- cout <<"MD : "<<MD << endl; 
- cout <<"MSB : "<<MSB << endl; 
- cout <<"LSB : "<<LSB << endl; 
- cout << "X1: " << x1 << endl; 
- cout << "X2: " << x2 << endl; 
- cout << "B5: " << B5 << endl; 
- cout << "T: " << T << endl; 
- */
+
+
+
