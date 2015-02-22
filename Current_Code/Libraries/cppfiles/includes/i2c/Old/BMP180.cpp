@@ -1,8 +1,7 @@
-
 //Philip N 2/13/2015
 
 #define Adress 0x77 // The I2C address that the BMP is on
-// #define Bus 1 // The I2C bus the BMP is on
+#define Bus 1 // The I2C bus the BMP is on
 #define Delay 12500 // Min delay between reading temperature and pressure values. should be > than 4500 (4.5 ms)
 
 #include <iostream>
@@ -15,22 +14,29 @@ using std::cin;
 using std::cout;
 using std::endl;
 
-// Prototypes. Functions are called by the class
+
+
+// Prototypes
+void FancyPrint(char* data, short start, short end);
+void read(char* data, short location, short BytesToRead);
+void RegWrite(char NewValue, short LocationToWriteTo);
+class BMP_Presure_Temp;
+
+// Abuse of static variables
+char data[0x100];
+BMP_Presure_Temp* TheBMP180;
+
+// void setup() and int* Get_Temperature_Pressure() are moved after the class declaration so that it may use it's functions
+
 
 class BMP_Presure_Temp {
 public:
-void RegWrite(char NewValue, short LocationToWriteTo);
-void read(char* data, short location, short BytesToRead);
-void SetupBMP180();
-
-int Bus;
-I2C* I2C_Object;
-
 //registers 0xab to 0xbf need to be read before using the class
 //class functions handle the reading of registers 0xf6 to 0xf8
-	BMP_Presure_Temp(int Bus);
-	int GetTemp();
-	int GetPressure();
+	BMP_Presure_Temp(char *zdata);
+	void GetTemp();
+	void GetPressure();
+
 	long p; //The atmospheric pressure in pa
 	long T; //The temperature in Celsius * 10. 150 = 15 Celsius, 200 = 20, ect...
 private:
@@ -48,22 +54,9 @@ char* data;
 	char oss;
 	char XLSB;
 //end of pressure specific variables
-
-void StartBMP(){
-I2C_Object ->startbus(Adress);
-}
-
-void CloseBMP()
-{
-I2C_Object ->closebus();
-}
-
 };
-BMP_Presure_Temp::BMP_Presure_Temp(int Bus) {
-data = new char[0x100];
-this->Bus = Bus;
-I2C_Object = new I2C(Bus);
-
+BMP_Presure_Temp::BMP_Presure_Temp(char *zdata) {
+	data = zdata;
 //AC1(0xAA)(0XAB), AC2(0XAC)(0XAD), AC3(0XAE)(0XAF), AC4(0XB0)(0XB1), AC5(0XB2)(0XB3),
 //AC6(0XB4)(0XB5), B1(0XB6)(0XB7) , B2(0XB8)(0XB9) , MB(0XBA)(0XBB) , MC(0XBC)(0XBD) ,
 //MD(0XBE)(0XBF)
@@ -82,7 +75,7 @@ I2C_Object = new I2C(Bus);
 	oss =2;
 }
 
-int BMP_Presure_Temp::GetTemp() {
+void BMP_Presure_Temp::GetTemp() {
 //AC1=408;AC2=-72;AC3=-14383;AC4=32741;AC5=32757;AC6=23153; B1=6190;B2=4; MB =-32768;MC=-8711;MD=2868;
 //printf("%02x",data[0xac]);printf("%02x\n",data[0xad]);
 //The following algorithm is outlined in the BMP 180 data sheet
@@ -97,11 +90,10 @@ int BMP_Presure_Temp::GetTemp() {
 	x2 = (MC << 11) / (x1 + MD);
 	B5 = x1 + x2;
 	T = (B5 + 8) / 16;
-return T;
+
 }
 
-// Returns an int that represents that directly corelates to atmospheric temp in pa
-int BMP_Presure_Temp::GetPressure() {
+void BMP_Presure_Temp::GetPressure() {
 // The following algorithm is outlined in the BMP 180 data sheet
 //RegWrite and read pause at the beginning when they are called
 //they pause for ~4.5 ms
@@ -133,42 +125,67 @@ int BMP_Presure_Temp::GetPressure() {
 	x1 = (x1 * 3038) >> 16;
 	x2 = (-7357 * p) >> 16;
 	p = p + (x1 + x2 + 3791) / 16;
-return p;
+
 // a = 44330*(1 - (p/p0)^(1/5.255)) . //p = output pressure. //p0 = 101325 (sea level)
 }
 
-void BMP_Presure_Temp::SetupBMP180()
+void SetupBMP180()
 {
-I2C_Object->startbus(Adress);;
+TheBMP180 = new BMP_Presure_Temp(data);
 }
 
-void BMP_Presure_Temp::read(char* data, short location, short BytesToRead) {
-/*
+// Returns a 2*int array pointer. return[0] is temperature and return[1] is pressure. a temperature of 250 is 25 c , temp of 10 is 1 c ... Presure is in Pa.
+int* GetBMP180_Temperature_Pressure()
+{
+static int* Temp_Pressure = new int[2];
+
+TheBMP180->GetTemp();
+TheBMP180->GetPressure();
+
+TheBMP180->T = Temp_Pressure[0];
+TheBMP180->p = Temp_Pressure[1];
+}
+
+void read(char* data, short location, short BytesToRead) {
 	static I2C cat(Bus);
 	static bool run = 0;
 	if (!run) {
 		cat.startbus(Adress);
 		run = 1;
 	}
-// */
 	static char* WriteLocation = new char[3];
 	WriteLocation[2] = location;
 	usleep(Delay);
-	I2C_Object->writebus(WriteLocation);
+	cat.writebus(WriteLocation);
 	usleep(Delay);
-	I2C_Object->readbus(data, BytesToRead);
+	cat.readbus(data, BytesToRead);
+}
+void FancyPrint(char* data, short start, short end) {
+	char c = 0;
+#ifdef debug
+	if(!(end-start)) cout << "opps!" << endl;
+#endif
+	for (int i = start; i <= end; i++) {
+		printf("%02x", data[i]);
+		cout << " ";
+		c++;
+		if (c >= 16) {
+			cout << endl;
+			c = 0;
+		}
+	}
 }
 
-
-void BMP_Presure_Temp::RegWrite(char NewValue, short LocationToWriteTo) {
-//	static I2C cat(Bus);
-//	cat.startbus(Adress);
-
+void RegWrite(char NewValue, short LocationToWriteTo) {
+	static I2C cat(Bus);
+	cat.startbus(Adress);
 	static char* temp = new char[2];
 	temp[0] = LocationToWriteTo;
 	temp[1] = NewValue;
 	usleep(Delay);
-	I2C_Object->writebus(temp);
+	cat.writebus(temp);
 }
-// */
+
+
+
 
