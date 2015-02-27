@@ -9,7 +9,7 @@ using std::cout;
 int main(int argc, char const *argv[])
 {
 
-    LIS331 lis331(2, 19);
+    LIS331 lis331(2, 0x19);
     lis331.Configure(100, 12);
     lis331.setpollrate(10000);
     lis331.setdatapoints(100);
