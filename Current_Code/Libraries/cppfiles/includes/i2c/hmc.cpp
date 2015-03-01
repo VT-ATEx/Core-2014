@@ -31,8 +31,7 @@ Magnetics HMC::getData() {
 	data[0] = 0xff;		
 	char* bar = "0x06";
 	char* baz = "0x03";	
-
-	i2c.writebus(bar);
+	
 	if(i2c.readbus(data, 6) != 6) {
 		perror("Read did not return bytes specified");
 		delete[] data;
