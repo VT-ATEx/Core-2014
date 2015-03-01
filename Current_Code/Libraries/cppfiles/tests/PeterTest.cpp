@@ -20,7 +20,6 @@
 #define LM73_ADDRESS 0x49
 #define HMC5883L_BUS 2
 #define HMC5883L_ADDRESS 0x3C
-#define HMC5883L_ADDRESS2 0x3D
 #define CHIPCAP2_BUS 2
 #define CHIPCAP2_ADDRESS 0x28
 #define LIS331_BUS 2
@@ -117,7 +116,7 @@ void *HMC5883L_retrieve(void *arg) {
 		hmc5883l_data.open("hmc5883ldata.csv");
 
 		pthread_mutex_lock (&mutexI2C2);
-		HMC hmc(HMC5883L_BUS, HMC_5883L_ADDRESS, HMC_5883L_ADDRESS2);
+		HMC hmc(HMC5883L_BUS, HMC_5883L_ADDRESS);
 		hmc5883l_values = hmc.getData();
 		hmc.close();
 		pthread_mutex_unlock (&mutexI2C2);
@@ -158,7 +157,6 @@ void *BMP180_retrieve(void *arg) {
 	
 }
 
-//TODO: Write loop into sub-threads, not main
 int main (int argc, char *argv[]) {
 	//Creates a thread attribute
 	pthread_attr_t attr;
