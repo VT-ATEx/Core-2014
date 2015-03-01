@@ -16,10 +16,11 @@
 //Defines the various addresses and busses the sensors are on
 // COnfiguration-dependant, change as needed
 #define NUMTHRDS 6
-#define LM73_BUS 1
+#define LM73_BUS 2
 #define LM73_ADDRESS 0x49
-#define HMC5883L_BUS 3
-#define HMC5993L_ADDRESS NULL
+#define HMC5883L_BUS 2
+#define HMC5883L_ADDRESS 0x3C
+#define HMC5883L_ADDRESS2 0x3D
 #define CHIPCAP2_BUS 2
 #define CHIPCAP2_ADDRESS 0x28
 #define LIS331_BUS 2
@@ -32,6 +33,8 @@ pthread_mutex_t mutexI2C2;
 pthread_mutex_t mutexI2C3;
 
 //Functions to create threads and retrieve data
+
+/* Not using LM73
 void *LM73_retrieve(void *arg) {
 	//Creates output stream
 	ostream lm73_data;
@@ -57,6 +60,7 @@ void *LM73_retrieve(void *arg) {
 	}
 	return 0;
 }
+*/
 
 void *LIS331_retrieve(void *arg) {
 	ostream lis331_data;
@@ -112,11 +116,11 @@ void *HMC5883L_retrieve(void *arg) {
 	while(1) {
 		hmc5883l_data.open("hmc5883ldata.csv");
 
-		pthread_mutex_lock (&mutexI2C3);
-		HMC hmc(HMC5883L_BUS, HMC_5883L_ADDRESS);
+		pthread_mutex_lock (&mutexI2C2);
+		HMC hmc(HMC5883L_BUS, HMC_5883L_ADDRESS, HMC_5883L_ADDRESS2);
 		hmc5883l_values = hmc.getData();
 		hmc.close();
-		pthread_mutex_unlock (&mutexI2C3);
+		pthread_mutex_unlock (&mutexI2C2);
 	
 		hmc5883l_data << hmc5883l_values.x + "," + 
 			hmc5883l_values.y + "," + hmc5883l_values.z + 
@@ -126,6 +130,7 @@ void *HMC5883L_retrieve(void *arg) {
 	return 0;
 }
 
+/*
 void *ChipCap2_retrieve(void *arg) {
 	ostream chipcap2_data;
 	
@@ -143,13 +148,14 @@ void *ChipCap2_retrieve(void *arg) {
 	}
 	return 0;
 }
+*/
 
 void *BMP180_retrieve(void *arg) {
 	ostream bmp180_data;
 	bmp180_data.open("bmp180data.csv");
 
-	pthread_mutex_lock (&mutexI2C1);
-	//TODO: Talk to Phillip about code
+	pthread_mutex_lock (&mutexI2C2);
+	
 }
 
 //TODO: Write loop into sub-threads, not main
