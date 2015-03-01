@@ -8,19 +8,19 @@ HMC::HMC(const int bus, const int addr) : i2c(bus) {
 	char buffer[2];
 	buffer[0] = 0x00;
 	buffer[1] = 0x70;
-	if (i2c.writebus(buffer) != 4) {
+	if (i2c.writebus(buffer) != 2) {
 		perror("Failed to write settings to HMC.");
 	}
 
 	buffer[0] = 0x01;
 	buffer[1] = 0xA0;
-	if(i2c.writebus(buffer) != 4) {
+	if(i2c.writebus(buffer) != 2) {
 		perror("Failed to write gain settings to HMC.");
 	}
 
 	buffer[0] = 0x02;
 	buffer[1] = 0x00;
-	if(i2c.writebus(buffer) != 4) {
+	if(i2c.writebus(buffer) != 2) {
 		perror("Failed to write measurement mode to HMC.");
 	}
 }
@@ -28,17 +28,14 @@ HMC::HMC(const int bus, const int addr) : i2c(bus) {
 Magnetics HMC::getData() {
 	char* data = new char[6];
 	Magnetics foo = {0,0,0};
-	data[0] = 0xff;
-	char bar[1];
-	char baz[1];		
-	bar[0] = 0x06;
-	baz[0] = 0x03;	
-
-	i2c.writebus(baz);	
+	data[0] = 0xff;		
+	char* bar = "0x06";
+	char* baz = "0x03";	
+	
 	if(i2c.readbus(data, 6) != 6) {
 		perror("Read did not return bytes specified");
 		delete[] data;
-	return foo;
+		return foo;
 	} else {
 		foo.x = data[0];
 		foo.y = data[2];
@@ -50,6 +47,7 @@ Magnetics HMC::getData() {
 		foo.y |= data[3];
 		foo.z |= data[5];
 	}
+	i2c.writebus(baz);
 	delete[] data;
 	return foo;
 }
