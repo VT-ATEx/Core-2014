@@ -2,7 +2,7 @@
 
 using namespace std;
 
-HMC::HMC(const int bus, const int addr, const int addr2) : i2c(bus) {
+HMC::HMC(const int bus, const int addr) : i2c(bus) {
 	i2c.startbus(addr);
 	//Sets sensor to single measurement, 8-average, 15 Hz
 	char buffer[2];
@@ -23,8 +23,6 @@ HMC::HMC(const int bus, const int addr, const int addr2) : i2c(bus) {
 	if(i2c.writebus(buffer) != 2) {
 		perror("Failed to write measurement mode to HMC.");
 	}
-	i2c.closebus();
-	i2c.startbus(addr2);
 }
 
 Magnetics HMC::getData() {
@@ -62,3 +60,4 @@ void HMC::close() {
 HMC::~HMC() {
 	close();
 }
+

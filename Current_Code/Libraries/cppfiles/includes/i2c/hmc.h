@@ -13,7 +13,7 @@ class HMC {
 private:
 	I2C i2c;
 public:
-	HMC(const int bus, const int addr, const int addr2);
+	HMC(const int bus, const int addr);
 	~HMC();
 	Magnetics getData();
 	void close();
