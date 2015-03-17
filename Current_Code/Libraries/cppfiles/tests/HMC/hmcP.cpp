@@ -1,5 +1,6 @@
 #include "hmc.h"
-#include <inistd.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -25,7 +26,7 @@ int HMC::selfTest() {
 		perror("Failed to write self-test measurement mode.");
 	}
 
-	foo = this.getData();
+	foo = HMC::getData();
 
 	//TODO: Write automatic gain adjustment
 	if (243 > foo.x && foo.y && foo.z) {
@@ -40,7 +41,7 @@ int HMC::selfTest() {
 	buffer[0] = 0x00;
 	buffer[1] = 0x70;
 	if (i2c.writebus(buffer) != 4) {
-		perror("Failed to exit test mode")
+		perror("Failed to exit test mode");
 		return 1;
 	}
 
@@ -50,9 +51,9 @@ int HMC::selfTest() {
 HMC::HMC(const int bus, const int addr) : i2c(bus) {
 	i2c.startbus(addr);
 
-	if (this.selfTest() != 0) {
+	if (HMC::selfTest() != 0) {
 		perror("Failed self test. Aborting.");
-		exit(-1);
+		abort();
 	}
 
 	//Sets sensor to single measurement, 8-average, 15 Hz

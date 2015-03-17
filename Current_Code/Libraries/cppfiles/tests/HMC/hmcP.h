@@ -17,6 +17,7 @@ public:
 	~HMC();
 	Magnetics getData();
 	void close();
+	int selfTest();
 };
 
 #endif

@@ -4,7 +4,7 @@
 using namespace std;
 
 int main() {
-	HMC hmc(2, 0x1E);
+	HMC hmc(1, 0x1E);
 	Magnetics data;
 	
 	while(1) {
