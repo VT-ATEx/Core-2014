@@ -1,7 +1,7 @@
 #include "cutdown.h"
 
 int activate_cutdown(unsigned int pinNum, double timeVal) {
-	usleep(timeVal);
+	sleep(timeVal);
 	GPIO gpio(pinNum);
 	if (gpio.gpio_export() != 0) {
 		perror("Export Failed!");

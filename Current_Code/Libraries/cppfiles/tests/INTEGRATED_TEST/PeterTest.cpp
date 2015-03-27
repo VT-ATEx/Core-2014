@@ -11,6 +11,7 @@
 #include "LIS331.h"
 #include "LM73.h"
 #include "RTC.h"
+#include "cutdown.h"
 #include <pthread.h>
 #include <iostream.h>
 
@@ -26,10 +27,12 @@
 #define CHIPCAP2_ADDRESS 0x28
 #define LIS331_BUS 2
 #define LIS331_ADDRESS 0x19
+#define CUTDOWN_PIN 4
+#define TIME_TIL_CUTDOWN 1800
 
 //Thread control variables
-//pthread is a way of stopping two sensors from trying to access the same i2c
-//bus at the same time.
+//pthread is a way of stopping two sensors from trying to access the 
+//same i2c bus at the same time.
 pthread_t callThd[NUMTHRDS];
 pthread_mutex_t mutexI2C1;
 pthread_mutex_t mutexI2C2;
@@ -37,8 +40,6 @@ pthread_mutex_t mutexI2C3;
 
 //Functions to create threads and retrieve data
 //TODO: Please comment out any sensors we are not using
-
-//TODO: Need to add cutdown function
 
 void *LM73_retrieve(void *arg) {
 	//Creates output stream
@@ -175,6 +176,11 @@ int main (int argc, char *argv[]) {
 	int i = 0;
 	void *status;
 
+	//Start cutdown countdown. Make sure you change the time til
+	//cutdown up top.
+	
+	activate_cutdown(CUTDOWN_PIN, TIME_TIL_CUTDOWN);
+
 	//Initializes thread blockers. These stop the threads from
 	//trying to access the same bus
 	pthread_mutex_init(&mutexI2C1, NULL);
@@ -187,8 +193,8 @@ int main (int argc, char *argv[]) {
 	pthread_attr_setdetachstate(&attr, PTHRED_CREATE_JOINABLE);
 
 	//Creates the threads
-	//TODO: Add/comment out any sensors we add or remove. Remember to change
-	//the index numbers (the ones in []).
+	//TODO: Add/comment out any sensors we add or remove. Remember 
+	//to change the index numbers (the ones in []).
 	pthread_create(&callThd[0], &attr, LM73_retrieve, (void *)i);	
 	pthread_create(&callThd[1], &attr, LIS331_retrieve, (void *)i);
 	pthread_create(&callThd[2], &attr, ITG3200_retrieve, (void *)i);
@@ -197,11 +203,12 @@ int main (int argc, char *argv[]) {
 	pthread_create(&callThd[5], &attr, BMP180_retrieve, (void *)i);
 
 	//Destroys the thread attribute
-	/*TODO: As I'm writing these I can't recall if this is supposed to go
-	 *before or after the following block. I'm leaving it here, if you
-	 *get pthread errors this may be why. Please look it up before you
-	 *change it.
+	/*TODO: As I'm writing, I can't recall if this is supposed to go
+	 *before or after the following block. I'm leaving it here, if 
+	 *you get pthread errors this may be why. Please look it up 
+	 *before you change it.
 	 */
+
 	pthread_attr_destroy(&attr);
 	
 	//Calls the thread end condition if the thread has ended

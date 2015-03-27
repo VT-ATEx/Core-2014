@@ -4,6 +4,7 @@
 #include "GPIO.h"
 #include <unistd.h>
 
+//timeVal is in seconds
 int activate_cutdown(unsigned int pinNum, double timeVal);
 
 #endif
