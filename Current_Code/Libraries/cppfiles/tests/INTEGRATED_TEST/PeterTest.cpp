@@ -3,6 +3,7 @@
  *e-mail pfm1995[at]vt[dot]edu with questions
 */
 
+//Please comment out/add any header files necessary
 #include "BMP180.h"
 #include "ChipCap2.h"
 #include "hmc.h"
@@ -11,10 +12,11 @@
 #include "LM73.h"
 #include "RTC.h"
 #include <pthread.h>
-#include <iostream>
+#include <iostream.h>
 
 //Defines the various addresses and busses the sensors are on
-// COnfiguration-dependant, change as needed
+//Configuration-dependant, change as needed
+//TODO: Check busses and adresses, change as necessary
 #define NUMTHRDS 6
 #define LM73_BUS 2
 #define LM73_ADDRESS 0x49
@@ -26,20 +28,24 @@
 #define LIS331_ADDRESS 0x19
 
 //Thread control variables
+//pthread is a way of stopping two sensors from trying to access the same i2c
+//bus at the same time.
 pthread_t callThd[NUMTHRDS];
 pthread_mutex_t mutexI2C1;
 pthread_mutex_t mutexI2C2;
 pthread_mutex_t mutexI2C3;
 
 //Functions to create threads and retrieve data
+//TODO: Please comment out any sensors we are not using
 
-/* Not using LM73
+//TODO: Need to add cutdown function
+
 void *LM73_retrieve(void *arg) {
 	//Creates output stream
 	ostream lm73_data;
 	//Creates sensor object
 	LM73 lm73(LM73_BUS, LM73_ADDRESS);
-
+	//Runs forever
 	while(1) {
 		//Opens or creates file for data output
 		lm73_data.open ("lm73data.csv");
@@ -59,7 +65,6 @@ void *LM73_retrieve(void *arg) {
 	}
 	return 0;
 }
-*/
 
 void *LIS331_retrieve(void *arg) {
 	ostream lis331_data;
@@ -81,7 +86,8 @@ void *LIS331_retrieve(void *arg) {
 		lis331.closer();
 		pthread_mutex_unlock();
 		lis331_data.close();
-	} 
+	}
+	return 0;
 }
 
 void *ITG3200_retrieve(void *arg) {
@@ -129,7 +135,6 @@ void *HMC5883L_retrieve(void *arg) {
 	return 0;
 }
 
-/*
 void *ChipCap2_retrieve(void *arg) {
 	ostream chipcap2_data;
 	
@@ -147,14 +152,21 @@ void *ChipCap2_retrieve(void *arg) {
 	}
 	return 0;
 }
-*/
 
+//TODO: Fix BMP code
 void *BMP180_retrieve(void *arg) {
 	ostream bmp180_data;
-	bmp180_data.open("bmp180data.csv");
-
-	pthread_mutex_lock (&mutexI2C2);
 	
+	while(1) {
+		bmp180_data.open("bmp180data.csv");
+
+		pthread_mutex_lock (&mutexI2C2);
+		//TODO: BMP code goes here, see other sensors for examples
+		pthread_mutex_unlock (&mutexI2C2);
+		
+		bmp180_data.close();
+	}
+	return 0;
 }
 
 int main (int argc, char *argv[]) {
@@ -175,6 +187,8 @@ int main (int argc, char *argv[]) {
 	pthread_attr_setdetachstate(&attr, PTHRED_CREATE_JOINABLE);
 
 	//Creates the threads
+	//TODO: Add/comment out any sensors we add or remove. Remember to change
+	//the index numbers (the ones in []).
 	pthread_create(&callThd[0], &attr, LM73_retrieve, (void *)i);	
 	pthread_create(&callThd[1], &attr, LIS331_retrieve, (void *)i);
 	pthread_create(&callThd[2], &attr, ITG3200_retrieve, (void *)i);
@@ -183,10 +197,17 @@ int main (int argc, char *argv[]) {
 	pthread_create(&callThd[5], &attr, BMP180_retrieve, (void *)i);
 
 	//Destroys the thread attribute
+	/*TODO: As I'm writing these I can't recall if this is supposed to go
+	 *before or after the following block. I'm leaving it here, if you
+	 *get pthread errors this may be why. Please look it up before you
+	 *change it.
+	 */
 	pthread_attr_destroy(&attr);
 	
 	//Calls the thread end condition if the thread has ended
 	//Otherwise, program pauses here until thread has ended
+	//NB: Currently threads never stop running, this is easy to change if we
+	//need to change it. Just change the while loops.
 	pthread_join(callThd[0], &status);
 	pthread_join(callThd[1], &status);
 	pthread_join(callThd[2], &status);
