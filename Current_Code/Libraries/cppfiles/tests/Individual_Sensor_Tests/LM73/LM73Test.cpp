@@ -13,7 +13,8 @@ int main() {
 	while(1) {
 
 		cout << "Temperature: " << lm73.getTemperature() << endl;
-	}
+usleep(100000);
+		}
 
 	return 0;
 }
