@@ -14,6 +14,7 @@
 #include "cutdown.h"
 #include <pthread.h>
 #include <iostream.h>
+#include <ctime>
 
 //Defines the various addresses and busses the sensors are on
 //Configuration-dependant, change as needed
@@ -23,12 +24,14 @@
 #define LM73_ADDRESS 0x49
 #define HMC5883L_BUS 2
 #define HMC5883L_ADDRESS 0x3C
-#define CHIPCAP2_BUS 2
-#define CHIPCAP2_ADDRESS 0x28
+//#define CHIPCAP2_BUS 2
+//#define CHIPCAP2_ADDRESS 0x28
 #define LIS331_BUS 2
 #define LIS331_ADDRESS 0x19
-#define CUTDOWN_PIN 4
-#define TIME_TIL_CUTDOWN 1800
+#define BMP180_BUS 2
+#define BMP180_ADDRESS 0x77
+#define CUTDOWN_PIN 13
+#define TIME_TIL_CUTDOWN 9000
 
 //Thread control variables
 //pthread is a way of stopping two sensors from trying to access the 
@@ -99,14 +102,12 @@ void *ITG3200_retrieve(void *arg) {
 		itg3200_data.open ("itg3200data.csv");
 	
 		pthread_mutex_lock (&mutexI2C2);
-		//TODO: Re-write ITG3200 code to include classes and not
-		// auto-define bus and address
-		SetupITG3200();	
-		itg3200_values = Get_XYZT();
+		ITG3200 itg = itg(ITG3200_BUS, ITG3200_ADDRESS);
+		itg3200_values = itg.Get_XYZT();
 		for (int i = 0; i < 3; i++) {
-			itg3200_data << *(itg3200_values + i) + ",";
+			itg3200_data << *(itg3200_values[i]) + ",";
 		}
-		//TODO: ITG3200 Code needs closing function
+		itg.CloseITG();
 		pthread_mutex_unlock (&mutexI2C2);
 	
 		itg3200_data << "\n";
@@ -135,7 +136,7 @@ void *HMC5883L_retrieve(void *arg) {
 	}
 	return 0;
 }
-
+/*
 void *ChipCap2_retrieve(void *arg) {
 	ostream chipcap2_data;
 	
@@ -153,16 +154,22 @@ void *ChipCap2_retrieve(void *arg) {
 	}
 	return 0;
 }
-
-//TODO: Fix BMP code
-void *BMP180_retrieve(void *arg) {
+*/
+void *BMP180_retrieve(time_t *launchtime) {
 	ostream bmp180_data;
 	
 	while(1) {
 		bmp180_data.open("bmp180data.csv");
 
 		pthread_mutex_lock (&mutexI2C2);
-		//TODO: BMP code goes here, see other sensors for examples
+		BMP_Pressure_Temp bmp(BMP180_BUS, BMP180_ADDRESS);
+		if (bmp.GetPressure < 8000 && (time(time_t *ctime) -
+			launchtime) > TIME_TIL_CUTDOWN) {
+			activate_cutdown(CUTDOWN_PIN);
+		}
+		bmp180_data << bmp.GetPressure() + "," + 
+			bmp.getHumidity() + "," + "\n";
+		bmp.ClodeBMP();
 		pthread_mutex_unlock (&mutexI2C2);
 		
 		bmp180_data.close();
@@ -175,11 +182,8 @@ int main (int argc, char *argv[]) {
 	pthread_attr_t attr;
 	int i = 0;
 	void *status;
-
-	//Start cutdown countdown. Make sure you change the time til
-	//cutdown up top.
-	
-	activate_cutdown(CUTDOWN_PIN, TIME_TIL_CUTDOWN);
+	time_t lauchtime;
+	time(&lauchtime);
 
 	//Initializes thread blockers. These stop the threads from
 	//trying to access the same bus
@@ -200,7 +204,8 @@ int main (int argc, char *argv[]) {
 	pthread_create(&callThd[2], &attr, ITG3200_retrieve, (void *)i);
 	pthread_create(&callThd[3], &attr, HMC5883L_retrieve, (void *)i);
 	pthread_create(&callThd[4], &attr, ChipCap2_retrieve, (void *)i);
-	pthread_create(&callThd[5], &attr, BMP180_retrieve, (void *)i);
+	pthread_create(&callThd[5], &attr, BMP180_retrieve, (void *)
+		 &launchtime);
 
 	//Destroys the thread attribute
 	/*TODO: As I'm writing, I can't recall if this is supposed to go

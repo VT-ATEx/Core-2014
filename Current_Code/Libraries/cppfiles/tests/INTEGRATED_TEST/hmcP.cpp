@@ -10,18 +10,21 @@ int HMC::selfTest() {
 	Magnetics foo;
 	buffer[0] = 0x00;
 	buffer[1] = 0x71;
+	usleep(10000);
 	if (i2c.writebus(buffer) != 4) {
 		perror("Failed to write self-test settings to HMC.");
 	}
 
 	buffer[0] = 0x01;
 	buffer[1] = 0xA0;
+	usleep(10000);
 	if (i2c.writebus(buffer) != 4) {
 		perror("Failed to write self-test gain to HMC.");
 	}
 
 	buffer[0] = 0x02;
 	buffer[1] = 0x00;
+	usleep(10000);
 	if (i2c.writebus(buffer) != 4) {
 		perror("Failed to write self-test measurement mode.");
 	}
@@ -60,18 +63,21 @@ HMC::HMC(const int bus, const int addr) : i2c(bus) {
 	char buffer[2];
 	buffer[0] = 0x00;
 	buffer[1] = 0x70;
+	usleep(10000);
 	if (i2c.writebus(buffer) != 4) {
 		perror("Failed to write settings to HMC.");
 	}
 
 	buffer[0] = 0x01;
 	buffer[1] = 0xA0;
+	usleep(10000);
 	if(i2c.writebus(buffer) != 4) {
 		perror("Failed to write gain settings to HMC.");
 	}
 
 	buffer[0] = 0x02;
 	buffer[1] = 0x00;
+	usleep(10000);
 	if(i2c.writebus(buffer) != 4) {
 		perror("Failed to write measurement mode to HMC.");
 	}
