@@ -5,7 +5,7 @@
 
 //Please comment out/add any header files necessary
 #include "BMP180.h"
-#include "ChipCap2.h"
+//#include "ChipCap2.h"
 #include "hmc.h"
 #include "ITG3200_Value_Read.h"
 #include "LIS331.h"
@@ -13,7 +13,7 @@
 #include "RTC.h"
 #include "cutdown.h"
 #include <pthread.h>
-#include <iostream.h>
+#include <iostream>
 #include <ctime>
 
 //Defines the various addresses and busses the sensors are on
