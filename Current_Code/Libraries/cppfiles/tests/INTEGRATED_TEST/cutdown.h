@@ -5,8 +5,8 @@
 #include <fstream>
 #include <unistd.h>
 
-//timeVal is in seconds
-int activate_cutdown(unsigned int pinNum, double timeVal);
+void on_led(); 
+int activate_cutdown(unsigned int pinNum);
 
 #endif
 

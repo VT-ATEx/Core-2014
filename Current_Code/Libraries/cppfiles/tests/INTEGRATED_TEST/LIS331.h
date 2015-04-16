@@ -23,7 +23,6 @@
 #include <unistd.h>
 #include <stdint.h>
 
-
 //int* lm73Init(int addr, int bus);
 //float lm73GetTemperature(int* i2cfd);
 //void lm73Close(int* i2cfd);

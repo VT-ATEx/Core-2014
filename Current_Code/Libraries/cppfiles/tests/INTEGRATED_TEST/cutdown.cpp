@@ -4,7 +4,7 @@
 
 using namespace std;
 
-int on_led() {
+void on_led() {
 	std::fstream fs;
 
 	fs.open(LED0_PATH "/trigger", std::fstream::out);

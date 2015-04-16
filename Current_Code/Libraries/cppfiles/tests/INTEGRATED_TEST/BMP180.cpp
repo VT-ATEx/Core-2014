@@ -1,4 +1,4 @@
-//Philip N 12/10/2014
+//Philip N 4/9/2015
 
 // #define Adress 0x77
 // #define Bus 1
@@ -54,6 +54,7 @@ BMP_Presure_Temp::BMP_Presure_Temp(int bus,int Adress) {
 		this-> bus = bus;
 	this->Adress = Adress;
 	Some_I2C_Class = new I2C(bus);
+// nessesary for initial BMP setup seen in this function below
 	StartBMP();
 
 	short datasize = 0x100;

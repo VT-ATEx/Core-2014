@@ -1,4 +1,4 @@
-#include "hmc.h"
+#include "hmcP.h"
 #include <unistd.h>
 #include <stdlib.h>
 
