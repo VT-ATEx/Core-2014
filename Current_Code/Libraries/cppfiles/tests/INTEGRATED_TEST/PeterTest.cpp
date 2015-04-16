@@ -173,17 +173,23 @@ void *ChipCap2_retrieve(void *arg) {
 void *BMP180_retrieve(void *arg) {
 	ofstream bmp180_data;
 	time_t ctime;
+	int foo;
 	
 	while(1) {
 		bmp180_data.open("bmp180data.csv");
 
 		pthread_mutex_lock (&mutexI2C2);
 		BMP_Presure_Temp bmp(BMP180_BUS, BMP180_ADDRESS);
-		if (bmp.GetPressure() <= 8000 && (time(&ctime) -
+		foo = bmp.GetPressure();
+		if (foo >= 100000 || foo <= 0) {
+			bmp180_data << "BMP has failed, aborting!";
+			return 0;
+		}
+		if (foo <= 8000 && (time(&ctime) -
 			launchtime) >= TIME_TIL_CUTDOWN) {
 			activate_cutdown(CUTDOWN_PIN);
 		}
-		bmp180_data << bmp.GetPressure();
+		bmp180_data << foo;
 		bmp180_data << ",";
 		bmp180_data << bmp.GetTemp();
 		bmp180_data << ",\n";
