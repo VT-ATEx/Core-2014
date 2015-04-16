@@ -4,9 +4,9 @@
 #include "I2C.h"
 
 typedef struct Magnetics{
-	int x;
-	int y;
-	int z;
+	char x;
+	char y;
+	char z;
 } Magnetics;
 
 class HMC {
