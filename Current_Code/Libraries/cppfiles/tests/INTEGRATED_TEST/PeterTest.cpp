@@ -59,7 +59,8 @@ void *LM73_retrieve(void *arg) {
 	//Runs forever
 	while(1) {
 		//Opens or creates file for data output
-		lm73_data.open ("lm73data.csv");
+		lm73_data.open ("lm73data.csv", std::ofstream::out | std
+			::ofstream::app);
 
 		//Locks bus so only this thread can access it
 		pthread_mutex_lock (&mutexI2C2);
@@ -88,7 +89,8 @@ void *LIS331_retrieve(void *arg) {
 	pthread_mutex_unlock (&mutexI2C2);
 
 	while(1) {
-		lis331_data.open ("lis331data.csv");
+		lis331_data.open ("lis331data.csv", std::ofstream::out |
+			 std::ofstream::app);
 		pthread_mutex_lock (&mutexI2C2);
 		lis331.start_update();
 		lis331_data << lis331.getXvalue();
@@ -110,7 +112,8 @@ void *ITG3200_retrieve(void *arg) {
 	short *itg3200_values;
 
 	while(1) {
-		itg3200_data.open ("itg3200data.csv");
+		itg3200_data.open ("itg3200data.csv", std::ofstream::out
+			| std::ofstream::app);
 	
 		pthread_mutex_lock (&mutexI2C2);
 		ITG3200 itg(ITG3200_BUS, ITG3200_ADDRESS);
@@ -133,7 +136,8 @@ void *HMC5883L_retrieve(void *arg) {
 	Magnetics hmc5883l_values;
 
 	while(1) {
-		hmc5883l_data.open("hmc5883ldata.csv");
+		hmc5883l_data.open("hmc5883ldata.csv", 
+			std::ofstream::out | std::ofstream::app);
 
 		pthread_mutex_lock (&mutexI2C2);
 		HMC hmc(HMC5883L_BUS, HMC5883L_ADDRESS);
@@ -176,7 +180,8 @@ void *BMP180_retrieve(void *arg) {
 	int foo;
 	
 	while(1) {
-		bmp180_data.open("bmp180data.csv");
+		bmp180_data.open("bmp180data.csv", std::ofstream::out |
+			std::ofstream::app);
 
 		pthread_mutex_lock (&mutexI2C2);
 		BMP_Presure_Temp bmp(BMP180_BUS, BMP180_ADDRESS);
